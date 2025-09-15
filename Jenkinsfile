@@ -1,38 +1,43 @@
 pipeline{
-    agent { label "testnew" };
+    agent any;
     stages{
-        stage("code clone"){
-          steps{
-              git url : "https://github.com/sha620/node-todo-cicd.git",branch: "master"
-          }  
-        }
-        stage("code build"){
+        stage("cloen"){
             steps{
-               sh "docker build -t new-app:ll ."  
-            }
-        }
-        stage("code test"){
-            steps{
-                echo "kkk"
+                git url: "https://github.com/sha620/node-todo-cicd.git",branch:"master"
             }
             
         }
-        stage("push to docker"){
+        stage("build"){
             steps{
-                withCredentials([usernamePassword(
-                credentialsId: "pok",
-                usernameVariable: "user",
-                passwordVariable: "pass"
-                    )]){
-                sh "docker login -u ${env.user} -p ${env.pass}"
-                sh "docker image tag new-app:ll ${env.user}/new-app:ll"
-                sh "docker push ${env.user}/new-app:ll"
-                    }
+                sh "docker build -t todo-app:ll ."
             }
         }
-        stage("code deploy"){
+        stage("test"){
             steps{
-                sh "docker run -d new-app:ll"
+                echo "test"
+            }
+            
+        }
+        stage("push"){
+            steps{
+                withCredentials([usernamePassword(
+                credentialsId:"lion",
+                usernameVariable:"user",
+                passwordVariable:"pass"
+                    )]){
+                        sh "docker login -u ${env.user} -p ${env.pass}"
+                        sh "docker image tag todo-app:ll ${env.user}/todo-app:ll"
+                        sh "docker push ${env.user}/todo-app:ll"
+                        
+                    }
+                    
+                    
+            }
+            
+        }
+        stage("deply"){
+            steps{
+                sh "docker compose up -d"
             }
             
         }
