@@ -13,7 +13,7 @@ pipeline{
         }
         stage("test"){
             steps{
-                echo "pppp"
+                echo "pppppp"
             }
         }
         stage("push"){
